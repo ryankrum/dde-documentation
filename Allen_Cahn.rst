@@ -68,7 +68,7 @@ Next, we choose the network. Here, we use a fully connected neural network of de
 
     net = dde.nn.FNN([2] + [20] * 3 + [1], "tanh", "Glorot normal")
 
-We add this layer:
+We add the ouput transformation layer:
 
 .. code-block:: python
 
