@@ -1,4 +1,4 @@
-Allen-Cahn equation
+Allen-Cahn Equation
 ================
 
 Problem Setup
