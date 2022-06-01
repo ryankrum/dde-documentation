@@ -1,7 +1,7 @@
 Allen-Cahn equation
 ================
 
-Problem setup
+Problem Setup
 --------------
 
 We will solve an Allen-Cahn equation:
