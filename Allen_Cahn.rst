@@ -45,7 +45,7 @@ Now, we express the PDE residual of the Allen-Cahn equation as follows
         dy_xx = dde.grad.hessian(y, x, i=0, j=0)
         return dy_t - d * dy_xx - 5 * (y - y**3)
         
-The first argument to ``pde`` is a 2-dimensional vector where the first component(``x[:, 0]``) is :math:`x`-coordinate and the second componenet (``x[:, 1]``) is the :math:`t`-coordinate. The second argument is the network output, i.e., the solution :math:`u(x, t)`, but here we use ``y`` as the name of the variable.
+The first argument to ``pde`` is a 2-dimensional vector where the first component(``x[:, 0]``) is :math:`x`-coordinate and the second component (``x[:, 1]``) is the :math:`t`-coordinate. The second argument is the network output, i.e., the solution :math:`u(x, t)`, but here we use ``y`` as the name of the variable.
 
 Next, we consider the initial conditions and boundary constraints, defining the transformation of the output as follows
 
