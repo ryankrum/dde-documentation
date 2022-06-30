@@ -7,7 +7,7 @@ We will solve a Poisson equation:
 
 .. math:: -\Delta u = \sum{i=1}^{4}[i\sin(ix)] + 8\sin(8x), \qquad x \in [0, \pi]
 
-With the Dirichlet boundary conditions:
+with the Dirichlet boundary conditions.
 
 .. math:: u(x = 0) = 0, u(x = \pi) = \pi
 
@@ -17,7 +17,7 @@ Implementation
 --------------
 This description goes through the implementation of a solver for the above described Poisson equation step-by-step.
 
-First, the DeepXDE, NumPy (``np``), and TensorFlow (``tf``) modules are imported:
+First, the DeepXDE, NumPy (``np``), and TensorFlow (``tf``) modules are imported.
 
 .. code-block:: python
 
@@ -25,13 +25,13 @@ First, the DeepXDE, NumPy (``np``), and TensorFlow (``tf``) modules are imported
     import numpy as np
     from deepxde.backend import tf
     
-We begin by defining a computational geometry. We can use a built-in class ``Interval`` as follows:
+We begin by defining a computational geometry. We can use a built-in class ``Interval`` as follows.
 
 .. code-block:: python
     
     geom = dde.geometry.Interval(0, np.pi)
     
-Next, we express the PDE residual of the Poisson equation:
+Next, we express the PDE residual of the Poisson equation.
 
 .. code-block:: python
 
@@ -42,7 +42,7 @@ Next, we express the PDE residual of the Poisson equation:
         
 The first argument to ``pde`` is the network input, i.e., the :math:`x`-coordinate. The second argument is the network output, i.e., the solution :math:`u(x)`, but here we use ``y`` as the name of the variable.
 
-Next, we define a function to return the value of :math:`u(x)` for the points :math:`x` on both ends of the Dirichlet boundary. In this case, it is :math:`u(x)=0` and :math:`u(x)=\pi`. For example, :math:`u(x) = x + \sum{i=1}^{4}[\frac{\sin(ix)}{i}] + \frac{\sin(8x)}{8}` is :math:`0` and :math:`\pi` on respective ends of the boundary, and thus we use the following:
+Next, the reference solution ``func`` is defined as the following.
 
 .. code-block:: python
 
@@ -50,15 +50,15 @@ Next, we define a function to return the value of :math:`u(x)` for the points :m
         summation = sum([np.sin(i * x) / i for i in range(1, 5)])
         return x + summation + np.sin(8 * x) / 8
         
-Now, we have specified the geometry, PDE residual, and Dirichlet boundary condition. We then define the PDE problem as the following:
+Now, we have specified the geometry and PDE residual. We then define the PDE problem as the following.
 
 .. code-block:: python
 
-    data = dde.data.PDE(geom, pde, [], 64, 8, solution=func, num_test=250)
+    data = dde.data.PDE(geom, pde, [], num_domain=64, solution=func, num_test=250)
     
-The number 64 is the number of training residual points sampled inside the domain, and the number 8 is the number of training points sampled on the boundary. The argument solution=func is the reference solution to compute the error of our solution, and can be ignored if we don’t have a reference solution. We use 250 residual points for testing the PDE residual.
+The number 64 is the number of training residual points sampled inside the domain. The argument solution=func is the reference solution to compute the error of our solution, and can be ignored if we don’t have a reference solution. We use 250 residual points for testing the PDE residual.
 
-Next, we choose the network. Here, we use a fully connected neural network of depth 4 (i.e., 3 hidden layers) and width 50:
+Next, we choose the network. Here, we use a fully connected neural network of depth 4 (i.e., 3 hidden layers) and width 50.
 
 .. code-block:: python
 
@@ -77,7 +77,7 @@ This demonstrates that both ends of the boundary constraint are hard conditions.
 
     net.apply_output_transform(output_transform)
     
-Now, we have the PDE problem and the network. We bulid a ``Model`` and choose the optimizer and learning rate. We also implement a learning rate decay to prevent the model from overfitting:
+Now, we have the PDE problem and the network. We bulid a ``Model`` and choose the optimizer and learning rate. We also implement a learning rate decay to reduce overfitting of the model.
 
 .. code-block:: python
 
@@ -86,11 +86,11 @@ Now, we have the PDE problem and the network. We bulid a ``Model`` and choose th
 
 We also compute the :math:`L^2` relative error as a metric during training.
 
-We then train the model for 30000 iterations:
+We then train the model for 30000 iterations.
 
 .. code-block:: python
 
-    losshistory, train_state = model.train(epochs=30000)
+    losshistory, train_state = model.train(iterations=30000)
     
 Finally, we save and plot the best trained result and the loss history of the model.
 
