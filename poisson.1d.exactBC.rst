@@ -1,17 +1,17 @@
 Poisson equation in 1D with hard boundary conditions
 ================
 
-Problem Setup
+Problem setup
 --------------
 We will solve a Poisson equation:
 
-.. math:: -\Delta u = \sum{i=1}^{4}[i\sin(ix)] + 8\sin(8x), \qquad x \in [0, \pi]
+.. math:: -\Delta u = \sum_{i=1}^4 i\sin(ix) + 8\sin(8x), \qquad x \in [0, \pi]
 
-with the Dirichlet boundary conditions.
+with the Dirichlet boundary conditions
 
-.. math:: u(x = 0) = 0, u(x = \pi) = \pi
+.. math:: u(x = 0) = 0, u(x = \pi) = \pi.
 
-The exact solution is :math:`u(x) = x + \sum{i=1}^{4}[\frac{\sin(ix)}{i}] + \frac{\sin(8x)}{8}`
+The exact solution is :math:`u(x) = x + \sum_{i=1}^4 \frac{\sin(ix)}{i} + \frac{\sin(8x)}{8}`.
 
 Implementation
 --------------
@@ -54,9 +54,9 @@ Now, we have specified the geometry and PDE residual. We then define the PDE pro
 
 .. code-block:: python
 
-    data = dde.data.PDE(geom, pde, [], num_domain=64, solution=func, num_test=250)
+    data = dde.data.PDE(geom, pde, [], num_domain=64, solution=func, num_test=400)
     
-The number 64 is the number of training residual points sampled inside the domain. The argument solution=func is the reference solution to compute the error of our solution, and can be ignored if we don’t have a reference solution. We use 250 residual points for testing the PDE residual.
+The number 64 is the number of training residual points sampled inside the domain. The argument ``solution=func`` is the reference solution to compute the error of our solution, and can be ignored if we don’t have a reference solution. We use 400 residual points for testing the PDE residual.
 
 Next, we choose the network. Here, we use a fully connected neural network of depth 4 (i.e., 3 hidden layers) and width 50.
 
@@ -67,7 +67,7 @@ Next, we choose the network. Here, we use a fully connected neural network of de
     initializer = 'Glorot uniform'
     net = dde.nn.FNN(layer_size, activation, initializer)
     
-Next, instead of using a loss function for the Dirichlet boundary conditions, we enforce them by defining the transformation of the output and applying it to the network. When :math:`x=0`, the boundary condition :math:`u(x = 0) = 0` is satisfied. When :math:`x=\pi`, the boundary condition :math:`u(x = \pi) = \pi` is satisfied. 
+Next, we enforce a loss term for the Dirichlet bounadry conditions by defining the transformation of the output and applying it to the network. When :math:`x=0`, the boundary condition :math:`u(x = 0) = 0` is satisfied. When :math:`x=\pi`, the boundary condition :math:`u(x = \pi) = \pi` is satisfied. 
 This demonstrates that both ends of the boundary constraint are hard conditions.
 
 .. code-block:: python
@@ -98,7 +98,7 @@ Finally, we save and plot the best trained result and the loss history of the mo
 
     dde.saveplot(losshistory, train_state, issave=True, isplot=True)
     
-Complete Code
+Complete code
 --------------
 .. literalinclude:: ../../../examples/pinn_forward/Poisson_Dirichlet_1d_exactBC.py
-  :language: python
+  :language: python.
