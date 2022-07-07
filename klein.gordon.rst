@@ -48,6 +48,6 @@ Next, we express the PDE residual of the Klein-Gordon equation.
         x, t = x[:, 0:1], x[:, 1:2]
         return dy_tt + alpha * dy_xx + beta * y + gamma * (y**k) + x * tf.cos(t) - (x**2) * (tf.cos(t)**2)
         
-The first argument to ``pde`` is 2-dimensional vector where the first component(``x[:,0:1]``) is :math:`x`-coordinate and the second component (``x[:,1:2]``) is the :math:`t`-coordinate. The second argument is the network output, i.e., the solution :math:`y(x, t)`.
+The first argument to ``pde`` is 2-dimensional vector where the first component(``x[:, 0:1]``) is :math:`x`-coordinate and the second component (``x[:, 1:2]``) is the :math:`t`-coordinate. The second argument is the network output, i.e., the solution :math:`y(x, t)`.
 
 Start here.
