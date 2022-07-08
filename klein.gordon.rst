@@ -50,4 +50,38 @@ Next, we express the PDE residual of the Klein-Gordon equation.
         
 The first argument to ``pde`` is 2-dimensional vector where the first component(``x[:, 0:1]``) is :math:`x`-coordinate and the second component (``x[:, 1:2]``) is the :math:`t`-coordinate. The second argument is the network output, i.e., the solution :math:`y(x, t)`.
 
-Start here.
+The reference solution ``func`` is then defined as the following.
+
+.. code-block:: python
+
+    def func(x):
+        return x[:, 0:1] * np.cos(x[:, 1:2])
+        
+Next, we consider the boundary/initial conditions. ``on_boundary`` is chosen here to use the whole boundary of the computational domain as the boundary condition. We include the ``geomtime`` space/time geometry created above and ``on_boundary`` as the BC in the ``DirichletBC`` function of DeepXDE. We also define ``IC`` which is the initial conditon for the Klein-Gordon equation, and we use the computational domain, initial function, and ``on_initial`` to specify the IC. Finally, we specify the initial condition for the first derivative of the :math:`y`-coordinate with respect to the :math:`t`-coordinate through the ``OperatorBC`` function of DeepXDE. 
+
+.. code-block:: python
+
+    bc = dde.icbc.DirichletBC(geomtime, func, lambda _, on_boundary : on_boundary)
+    ic_1 = dde.icbc.IC(geomtime, func, lambda _, on_initial: on_initial)
+    ic_2 = dde.icbc.OperatorBC(
+        geomtime,
+        lambda x, y, _: dde.grad.jacobian(y, x, i=0, j=1),
+        lambda x, _: np.isclose(x[1], 0),
+    )
+    
+Now, we have specified the geometry, PDE residual, and the boundary/initial conditions. We then define the ``TimePDE`` problem as the following.
+
+.. code-block:: python
+    
+    data = dde.data.TimePDE(
+        geomtime,
+        pde,
+        [bc, ic_1, ic_2],
+        num_domain=10000,
+        num_boundary=500,
+        num_initial=500,
+        solution=func,
+        num_test=2000, 
+    )
+
+w
