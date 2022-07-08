@@ -84,4 +84,39 @@ Now, we have specified the geometry, PDE residual, and the boundary/initial cond
         num_test=2000, 
     )
 
-w
+The number 10000 is the number of training residual points sampled inside of the domain, and the number 500 is the number of training residual points sampled on the boundary. We also include 500 initial residual points for the initial conditions and 2000 points for testing the PDE residual. 
+
+Next, we choose the network. Here, we use a fully connected neural network of depth 3 (i.e., 2 hidden layers) and width 40.
+
+.. code-block:: python
+
+    layer_size = [2] + [40] * 2 + [1]
+    activation = 'tanh'
+    initializer = 'Glorot uniform'
+    net = dde.nn.FNN(layer_size, activation, initializer)
+    
+Now, we have the PDE problem and the network. We build a ``Model`` and choose the optimizer and learning rate. We also implement a learning rate decay to reduce overfitting of the model.
+
+.. code-block:: python
+
+    model = dde.Model(data, net)
+    model.compile('adam', lr=0.001, metrics=['l2 relative error'], decay=("inverse time", 2000, 0.9))
+    
+We also compute the ``L^2`` relative error as a metric during training.
+
+We then train the model for 10000 iterations.
+
+.. code-block:: python
+
+    losshistory, train_state = model.train(iterations=10000)
+    
+Finally, we save and plot the best trained result and loss history of the model.
+
+.. code-block:: python
+
+    dde.saveplot(losshistory, train_state, issave=True, isplot=True)
+    
+Complete code
+--------------
+.. literalinclude:: ../../../examples/pinn_forward/Klein_Gordon.py
+  :language: python
