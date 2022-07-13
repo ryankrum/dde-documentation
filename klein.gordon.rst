@@ -120,11 +120,37 @@ After we train the network with Adam, we compile again and continue to train the
     model.compile('L-BFGS', metrics=['l2 relative error')
     losshistory, train_state = model.train()
     
-Finally, we save and plot the best trained result and loss history of the model.
+We then save and plot the best trained result and loss history of the model.
 
 .. code-block:: python
 
     dde.saveplot(losshistory, train_state, issave=True, isplot=True)
+    
+Finally, we use the trained model to predict the solution to the Klein-Gordon equation over a given domain. This allows us to ensure that the predicted solution is consitent with the correct solution that we stated in the beginning.
+
+.. code-block:: python
+
+    x = np.linspace(-1, 1, 256)
+    t = np.linspace(0, 10, 256)
+    X, T = np.meshgrid(x, t)
+
+    X_star = np.hstack((X.flatten()[:, None], T.flatten()[:, None]))
+    prediction = model.predict(X_star, operator=None)
+
+    v = griddata(X_star, prediction[:, 0], (X, T), method='cubic')
+
+    fig, ax = plt.subplots(1)
+    ax[0].set_title("Results")
+    ax[0].set_ylabel("Prediction")
+    ax[0].imshow(
+        v.T,
+        interpolation="nearest",
+        cmap="viridis",
+        extent=[0, 10, -1, 1],
+        origin="lower",
+        aspect="auto",
+    )
+    plt.show()
     
 Complete code
 --------------
