@@ -21,13 +21,16 @@ Implementation
 --------------
 This description goes through the implementation of a solver for the above described Klein-Gordon equation step-by-step.
 
-First, the DeepXDE, NumPy (``np``), and TensorFlow (``tf``) modules are imported.
+First, the DeepXDE, NumPy, Maplotlib, TensorFlow, and SciPy modules are imported.
 
 .. code-block:: python
 
     import deepxde as dde
     import numpy as np
+    import matplotlib.pyplot as plt
     from deepxde.backend import tf
+    from scipy.interpolate import griddata
+
     
 We begin by defining computational geometries. We can use a built-in class ``Interval`` and ``TimeDomain`` and we combine both the domains using ``GeometryXTime`` as follows
 
@@ -48,7 +51,7 @@ Next, we express the PDE residual of the Klein-Gordon equation.
         x, t = x[:, 0:1], x[:, 1:2]
         return dy_tt + alpha * dy_xx + beta * y + gamma * (y**k) + x * tf.cos(t) - (x**2) * (tf.cos(t)**2)
         
-The first argument to ``pde`` is 2-dimensional vector where the first component(``x[:, 0:1]``) is :math:`x`-coordinate and the second component (``x[:, 1:2]``) is the :math:`t`-coordinate. The second argument is the network output, i.e., the solution :math:`y(x, t)`.
+The first argument to ``pde`` is a 2-dimensional vector where the first component(``x[:, 0:1]``) is the :math:`x`-coordinate and the second component (``x[:, 1:2]``) is the :math:`t`-coordinate. The second argument is the network output, i.e., the solution :math:`y(x, t)`.
 
 The reference solution ``func`` is then defined as the following.
 
@@ -77,14 +80,14 @@ Now, we have specified the geometry, PDE residual, and the boundary/initial cond
         geomtime,
         pde,
         [bc, ic_1, ic_2],
-        num_domain=10000,
-        num_boundary=500,
-        num_initial=500,
+        num_domain=30000,
+        num_boundary=1500,
+        num_initial=1500,
         solution=func,
-        num_test=2000, 
+        num_test=6000, 
     )
 
-The number 10000 is the number of training residual points sampled inside of the domain, and the number 500 is the number of training residual points sampled on the boundary. We also include 500 initial residual points for the initial conditions and 2000 points for testing the PDE residual. 
+The number 30000 is the number of training residual points sampled inside of the domain, and the number 1500 is the number of training residual points sampled on the boundary. We also include 1500 initial residual points for the initial conditions and 6000 points for testing the PDE residual. 
 
 Next, we choose the network. Here, we use a fully connected neural network of depth 3 (i.e., 2 hidden layers) and width 40.
 
@@ -100,15 +103,22 @@ Now, we have the PDE problem and the network. We build a ``Model`` and choose th
 .. code-block:: python
 
     model = dde.Model(data, net)
-    model.compile('adam', lr=0.001, metrics=['l2 relative error'], decay=("inverse time", 2000, 0.9))
+    model.compile('adam', lr=0.001, metrics=['l2 relative error'], decay=("inverse time", 3000, 0.9))
     
 We also compute the ``L^2`` relative error as a metric during training.
 
-We then train the model for 10000 iterations.
+We then train the model for 20000 iterations.
 
 .. code-block:: python
 
-    losshistory, train_state = model.train(iterations=10000)
+    model.train(iterations=20000)
+    
+After we train the network with Adam, we compile again and continue to train the network using L-BFGS to achieve a smaller loss.
+
+.. code-block:: python
+    
+    model.compile('L-BFGS', metrics=['l2 relative error')
+    losshistory, train_state = model.train()
     
 Finally, we save and plot the best trained result and loss history of the model.
 
