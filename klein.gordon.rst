@@ -15,7 +15,7 @@ and Dirichlet boundary conditions.
 
 .. math:: y(-1, t) = -\cos(t), y(1, t) = \cos(t).
 
-We will also specify the following parameters:
+We also specify the following parameters for the equation:
 
 .. code-block:: python
 
