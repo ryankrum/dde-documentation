@@ -11,9 +11,15 @@ with initial conditions
 
 .. math:: y(x, 0) = x, \frac{\partial y}{\partial t}(x, 0) = 0
 
-and the Dirichlet boundary conditions
+and Dirichlet boundary conditions.
 
 .. math:: y(-1, t) = -\cos(t), y(1, t) = \cos(t).
+
+We will also specify the following parameters:
+
+.. code-block:: python
+
+    alpha, beta, gamma, k = -1, 0, 1, 2
 
 The reference solution is :math:`y(x, t) = x\cos(t)`.
 
@@ -44,7 +50,6 @@ Next, we express the PDE residual of the Klein-Gordon equation:
 
 .. code-block:: python
 
-    alpha, beta, gamma, k = -1, 0, 1, 2
     def pde(x, y):
         dy_tt = dde.grad.hessian(y, x, i=1, j=1)
         dy_xx = dde.grad.hessian(y, x, i=0, j=0)
