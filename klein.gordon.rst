@@ -21,14 +21,14 @@ Implementation
 --------------
 This description goes through the implementation of a solver for the above described Klein-Gordon equation step-by-step.
 
-First, the DeepXDE, NumPy, Maplotlib, TensorFlow, and SciPy modules are imported.
+First, the DeepXDE, NumPy, TensorFlow, Maplotlib, and SciPy modules are imported.
 
 .. code-block:: python
 
     import deepxde as dde
     import numpy as np
-    import matplotlib.pyplot as plt
     from deepxde.backend import tf
+    import matplotlib.pyplot as plt
     from scipy.interpolate import griddata
 
     
@@ -40,7 +40,7 @@ We begin by defining computational geometries. We can use a built-in class ``Int
     timedomain = dde.geometry.TimeDomain(0, 10)
     geomtime = dde.geometry.GeometryXTime(geom, timedomain)
     
-Next, we express the PDE residual of the Klein-Gordon equation.
+Next, we express the PDE residual of the Klein-Gordon equation:
 
 .. code-block:: python
 
@@ -126,7 +126,7 @@ We then save and plot the best trained result and loss history of the model.
 
     dde.saveplot(losshistory, train_state, issave=True, isplot=True)
     
-Finally, we use the trained model to predict the solution to the Klein-Gordon equation over a given domain. This allows us to ensure that the predicted solution is consitent with the correct solution that we stated in the beginning.
+Finally, we use the trained model to plot the predicted solution of the Klein-Gordon equation.
 
 .. code-block:: python
 
